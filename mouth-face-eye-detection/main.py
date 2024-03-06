@@ -30,13 +30,18 @@ while True:
 
         # Detect eyes
         eyes = eye_cascade.detectMultiScale(roi_gray)
-        for (ex, ey, ew, eh) in eyes:
-            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+        if len(eyes) == 0:
+            # Eye is closed
+            cv2.putText(frame, "Closed Eye", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         # Detect mouth
         mouths = mouth_cascade.detectMultiScale(roi_gray)
         for (mx, my, mw, mh) in mouths:
             cv2.rectangle(roi_color, (mx, my), (mx + mw, my + mh), (0, 0, 255), 2)
+
+            # Check if mouth width increases (open mouth)
+            if mw > w / 2:
+                cv2.putText(frame, "Open Mouth", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     # Display the frame
     cv2.imshow('Face Detection', frame)
